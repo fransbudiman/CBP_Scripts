@@ -12,7 +12,7 @@ Scripts for cBioPortal project
 8. Then we will make the case directory and files.
 9. Finally we run metaimport script to validate the study directory and upload the data to cBioPortal (local?).
 
-## Installation_SOP.md
+## Guide_SOP.md
 This markdown file provides a step-by-step guide to run vcf2maf, validate your study directory and upload your data to cBioPortal.
 
 ## vcf_merger.sh
