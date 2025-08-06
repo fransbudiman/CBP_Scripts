@@ -3,9 +3,9 @@ Scripts for cBioPortal project
 
 # General Flow
 1. Assume we have a directory full of VCF files, this signifies a study.
-2. We first merge the VCF files into a single VCF file.
-3. Since the VCF uses TM tumor naming convention and we want to use the SGT naming, we need to rename the column in the merged VCF file and create a SGT/TM mapping file for future use.
-4. We then run vcf2maf to convert the VCF file into MAF format.
+2. We first run vcf2maf to convert the VCF files into MAF format.
+3. Then we will rename the tumor sample column to SGT naming convention and create a mapping file for future reference.
+4. Next we will merge the MAF files into a single MAF file.
 5. Then we will find the oncotree code for the cancer type of the whole study. If study has multiple cancer types, we will use the most common one. **unsure how to handle this yet**.
 6. Then we will make the metadata text file for the study.
 7. Then using the SGT/TM mapping file and the provided csv file containing more information about the samples, we will create the data_clinical_sample.txt file.
