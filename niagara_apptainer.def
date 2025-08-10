@@ -12,9 +12,9 @@ From: ubuntu:22.04
 %post
     apt-get update && apt-get install -y curl bzip2 tar
     curl -sL https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda.sh
-    bash miniconda.sh -bup $HOME/miniconda3 && rm -f miniconda.sh
+    bash miniconda.sh -bup /opt/miniconda3 && rm -f miniconda.sh
 
-    source $HOME/miniconda3/etc/profile.d/conda.sh
+    . /opt/miniconda3/etc/profile.d/conda.sh
     conda update -y -n base -c defaults conda
     conda config --set solver libmamba
 
@@ -26,21 +26,21 @@ From: ubuntu:22.04
     export VCF2MAF_URL=$(curl -sL https://api.github.com/repos/mskcc/vcf2maf/releases | grep -m1 tarball_url | cut -d\" -f4)
 
     # Create a folder for vcf2maf
-    mkdir -p "$HOME/vcf2maf"
+    mkdir -p "/opt/vcf2maf"
 
-    # Download and extract into $HOME/vcf2maf
-    curl -L -o "$HOME/vcf2maf/vcf2maf.tar.gz" "$VCF2MAF_URL"
-    tar -zxf "$HOME/vcf2maf/vcf2maf.tar.gz" -C "$HOME/vcf2maf" --strip-components=1
+    # Download and extract into /opt/vcf2maf
+    curl -L -o "/opt/vcf2maf/vcf2maf.tar.gz" "$VCF2MAF_URL"
+    tar -zxf "/opt/vcf2maf/vcf2maf.tar.gz" -C "/opt/vcf2maf" --strip-components=1
 
     # (Optional) Check manuals or other info
-    perl "$HOME/vcf2maf/vcf2maf.pl" --man > /dev/null
-    perl "$HOME/vcf2maf/maf2maf.pl" --man > /dev/null
+    perl "/opt/vcf2maf/vcf2maf.pl" --man > /dev/null
+    perl "/opt/vcf2maf/maf2maf.pl" --man > /dev/null
 
 %environment
     # This is the environment that will be set when the container runs.
     # It should contain all the necessary environment variables for vcf2maf to work.
-    export PATH="$HOME/miniconda3/bin:$PATH"
-    export PATH="$HOME/vcf2maf:$PATH"
+    export PATH="/opt/miniconda3/bin:$PATH"
+    export PATH="/opt/vcf2maf:$PATH"
 
 
 # run when the container runs (apptainer run)
