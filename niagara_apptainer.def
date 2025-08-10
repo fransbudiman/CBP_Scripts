@@ -1,0 +1,90 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+%help
+    This def file will create a singularity file (.sif) to run vcf2maf in Niagara cluster
+
+# run once when you build (apptainer build).
+# Everything done here will be baked into the apptainer.
+# So large file like the reference genome should not be included here.
+# Instead large files should be downloaded at runtime and stored in the mounted directory.
+# We will install miniconda here.
+%post
+    curl -sL https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda.sh
+    bash miniconda.sh -bup $HOME/miniconda3 && rm -f miniconda.sh
+
+    source $HOME/miniconda3/etc/profile.d/conda.sh
+    conda update -y -n base -c defaults conda
+    conda config --set solver libmamba
+
+    conda create -y -n vep
+    conda activate vep
+    conda install -y -c conda-forge -c bioconda -c defaults ensembl-vep==112.0 htslib==1.20 bcftools==1.20 samtools==1.20 ucsc-liftover==447
+
+    # now we download the latest vcf2maf release
+    export VCF2MAF_URL=$(curl -sL https://api.github.com/repos/mskcc/vcf2maf/releases | grep -m1 tarball_url | cut -d\" -f4)
+
+    # Create a folder for vcf2maf
+    mkdir -p "$HOME/vcf2maf"
+
+    # Download and extract into $HOME/vcf2maf
+    curl -L -o "$HOME/vcf2maf/vcf2maf.tar.gz" "$VCF2MAF_URL"
+    tar -zxf "$HOME/vcf2maf/vcf2maf.tar.gz" -C "$HOME/vcf2maf" --strip-components=1
+
+    # (Optional) Check manuals or other info
+    perl "$HOME/vcf2maf/vcf2maf.pl" --man > /dev/null
+    perl "$HOME/vcf2maf/maf2maf.pl" --man > /dev/null
+
+%environment
+    # This is the environment that will be set when the container runs.
+    # It should contain all the necessary environment variables for vcf2maf to work.
+    export PATH="$HOME/miniconda3/bin:$PATH"
+    export PATH="$HOME/vcf2maf:$PATH"
+
+
+# run when the container runs (apptainer run)
+%runscript
+
+    # first lets check if reference file exist
+
+    # in this case the bind will be --bind $SCRATCH/vep_reference:/mount/vep_reference
+    REF_DIR="/mount/vep_reference/homo_sapiens/112_GRCh38"
+    INFOTXT="$REF_DIR/info.txt"
+    download_bool=false
+
+    if [ -f "$INFOTXT" ]; then
+        echo "Reference info file found."
+        if grep -q "GRCh38" "$INFOTXT"; then
+            echo "Reference genome GRCh38 found skipping download step."
+        else
+            echo "Reference genome GRCh38 not found."
+            download_bool=true
+        fi
+    else
+        echo "Reference genome GRCh38 not found."
+        download_bool=true
+    fi
+
+    if [ "$download_bool" = true ]; then
+        echo "Downloading reference genome GRCh38..."
+        # Command to download the reference genome
+        mkdir -p $SCRATCH/vep_reference/homo_sapiens/112_GRCh38/
+        rsync -avr --progress rsync://ftp.ensembl.org/ensembl/pub/release-112/variation/indexed_vep_cache/homo_sapiens_vep_112_GRCh38.tar.gz $SCRATCH/vep_reference/homo_sapiens/112_GRCh38/
+        tar -zxf $SCRATCH/vep_reference/homo_sapiens_vep_112_GRCh38.tar.gz -C $SCRATCH/vep_reference/homo_sapiens/112_GRCh38/
+        rsync -avr --progress rsync://ftp.ensembl.org/ensembl/pub/release-112/fasta/homo_sapiens/dna_index/ $SCRATCH/vep_reference/homo_sapiens/112_GRCh38/
+    fi
+
+    # activate vep again
+    conda activate vep
+
+    perl vcf2maf.pl \
+    --input-vcf "$1" \
+    --output-maf "$2" \
+    --ref-fasta "$REF_DIR/Homo_sapiens.GRCh38.dna.toplevel.fa.gz" \
+    --vep-path "$(dirname "$(which vep)")" \
+    --vep-data "$SCRATCH/vep_reference" \
+    --ncbi-build GRCh38 \
+    --tumor-id TUMOR \
+    --normal-id NORMAL
+
+
