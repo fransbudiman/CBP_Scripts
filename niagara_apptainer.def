@@ -10,7 +10,7 @@ From: ubuntu:22.04
 # Instead large files should be downloaded at runtime and stored in the mounted directory.
 # We will install miniconda here.
 %post
-    apt-get update && apt-get install -y curl bzip2 tar
+    apt-get update && apt-get install -y curl bzip2 tar perl rsync
     curl -sL https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda.sh
     bash miniconda.sh -bup /opt/miniconda3 && rm -f miniconda.sh
 
@@ -23,6 +23,7 @@ From: ubuntu:22.04
     conda create -y -n vep
     conda activate vep
     conda install -y -c conda-forge -c bioconda -c defaults ensembl-vep==112.0 htslib==1.20 bcftools==1.20 samtools==1.20 ucsc-liftover==447
+    conda init bash
 
     # now we download the latest vcf2maf release
     export VCF2MAF_URL=$(curl -sL https://api.github.com/repos/mskcc/vcf2maf/releases | grep -m1 tarball_url | cut -d\" -f4)
@@ -50,7 +51,7 @@ From: ubuntu:22.04
 
     # first lets check if reference file exist
 
-    # in this case the bind will be --bind $SCRATCH/vep_reference:/mount/vep_reference
+    # in this case the bind will be --bind $SCRATCH/:/mount/
     mkdir -p /mount/vep_reference/homo_sapiens/112_GRCh38
     REF_DIR="/mount/vep_reference/homo_sapiens/112_GRCh38"
     INFOTXT="$REF_DIR/info.txt"
@@ -78,6 +79,7 @@ From: ubuntu:22.04
     fi
 
     # activate vep again
+    . /opt/miniconda3/etc/profile.d/conda.sh
     conda activate vep
 
     perl vcf2maf.pl \
