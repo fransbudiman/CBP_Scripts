@@ -51,6 +51,7 @@ From: ubuntu:22.04
     # first lets check if reference file exist
 
     # in this case the bind will be --bind $SCRATCH/vep_reference:/mount/vep_reference
+    mkdir -p /mount/vep_reference/homo_sapiens/112_GRCh38
     REF_DIR="/mount/vep_reference/homo_sapiens/112_GRCh38"
     INFOTXT="$REF_DIR/info.txt"
     download_bool=false
@@ -71,10 +72,9 @@ From: ubuntu:22.04
     if [ "$download_bool" = true ]; then
         echo "Downloading reference genome GRCh38..."
         # Command to download the reference genome
-        mkdir -p $SCRATCH/vep_reference/homo_sapiens/112_GRCh38/
-        rsync -avr --progress rsync://ftp.ensembl.org/ensembl/pub/release-112/variation/indexed_vep_cache/homo_sapiens_vep_112_GRCh38.tar.gz $SCRATCH/vep_reference/homo_sapiens/112_GRCh38/
-        tar -zxf $SCRATCH/vep_reference/homo_sapiens_vep_112_GRCh38.tar.gz -C $SCRATCH/vep_reference/homo_sapiens/112_GRCh38/
-        rsync -avr --progress rsync://ftp.ensembl.org/ensembl/pub/release-112/fasta/homo_sapiens/dna_index/ $SCRATCH/vep_reference/homo_sapiens/112_GRCh38/
+        rsync -avr --progress rsync://ftp.ensembl.org/ensembl/pub/release-112/variation/indexed_vep_cache/homo_sapiens_vep_112_GRCh38.tar.gz /mount/vep_reference/homo_sapiens/112_GRCh38/
+        tar -zxf /mount/vep_reference/homo_sapiens/112_GRCh38/homo_sapiens_vep_112_GRCh38.tar.gz -C /mount/vep_reference/homo_sapiens/112_GRCh38/
+        rsync -avr --progress rsync://ftp.ensembl.org/ensembl/pub/release-112/fasta/homo_sapiens/dna_index/ /mount/vep_reference/homo_sapiens/112_GRCh38/
     fi
 
     # activate vep again
