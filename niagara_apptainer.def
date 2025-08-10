@@ -15,6 +15,8 @@ From: ubuntu:22.04
     bash miniconda.sh -bup /opt/miniconda3 && rm -f miniconda.sh
 
     . /opt/miniconda3/etc/profile.d/conda.sh
+    conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+    conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
     conda update -y -n base -c defaults conda
     conda config --set solver libmamba
 
