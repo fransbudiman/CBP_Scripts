@@ -11,7 +11,9 @@ From: ubuntu:22.04
 # We will install miniconda here.
 %post
     # Install dependencies
-    apt-get update && apt-get install -y curl bzip2 tar perl rsync
+    apt-get update && apt-get install -y curl bzip2 tar perl rsync cpanminus build-essential
+    cpanm List::MoreUtils
+
     # Install Miniconda
     curl -sL https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda.sh
     bash miniconda.sh -bup /opt/miniconda3 && rm -f miniconda.sh
@@ -24,9 +26,7 @@ From: ubuntu:22.04
     # Update conda and install required packages
     conda update -y -n base -c defaults conda
     conda config --set solver libmamba
-    # Install List::MoreUtils
-    conda install -y -c conda-forge perl-list-moreutils
-
+    
     # Create and activate vep environment
     conda create -y -n vep
     conda activate vep
