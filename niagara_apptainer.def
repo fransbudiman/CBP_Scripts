@@ -30,11 +30,11 @@ From: ubuntu:22.04
     # Create and activate vep environment
     conda create -y -n vep
     conda activate vep
-    
+
     # Install VEP and dependencies
     conda install -y -c conda-forge -c bioconda -c defaults ensembl-vep==112.0 htslib==1.20 bcftools==1.20 samtools==1.20 ucsc-liftover==447
     # Install List::MoreUtils inside vep environment
-    cpanm --local-lib=/opt/miniconda3/envs/vep/lib/perl5 List::MoreUtils
+    cpanm List::MoreUtils
     # Initialize conda for bash
     conda init bash
 
