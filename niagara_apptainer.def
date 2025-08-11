@@ -82,7 +82,7 @@ From: ubuntu:22.04
     . /opt/miniconda3/etc/profile.d/conda.sh
     conda activate vep
 
-    perl vcf2maf.pl \
+    perl /opt/vcf2maf/vcf2maf.pl \
     --input-vcf "$1" \
     --output-maf "$2" \
     --ref-fasta "$REF_DIR/Homo_sapiens.GRCh38.dna.toplevel.fa.gz" \
