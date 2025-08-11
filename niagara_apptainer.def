@@ -34,8 +34,8 @@ From: ubuntu:22.04
     # Install VEP and dependencies
     conda install -y -c conda-forge -c bioconda -c defaults ensembl-vep==112.0 htslib==1.20 bcftools==1.20 samtools==1.20 ucsc-liftover==447
     # Install List::MoreUtils inside vep environment
-    conda install -c conda-forge perl-app-cpanminus
-    cpanm List::MoreUtils
+    conda install -y -c bioconda perl-list-moreutils
+
 
     # Initialize conda for bash
     conda init bash
