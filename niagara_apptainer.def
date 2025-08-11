@@ -104,7 +104,7 @@ From: ubuntu:22.04
     --output-maf "$2" \
     --ref-fasta "$REF_DIR/Homo_sapiens.GRCh38.dna.toplevel.fa.gz" \
     --vep-path "$(dirname "$(which vep)")" \
-    --vep-data "$SCRATCH/vep_reference" \
+    --vep-data "/mount/vep_reference" \
     --ncbi-build GRCh38 \
     --tumor-id TUMOR \
     --normal-id NORMAL
