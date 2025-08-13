@@ -60,6 +60,7 @@ for vcf_file in "$PROCESSED_DIR"/*.vcf; do
 done
 
 # Merge the MAF files
+conda install pandas numpy
 python "$SCRIPT_DIR/merge_maf.py" --input-dir "$TEMP_DIR/maf_files" --output-file "$TEMP_DIR/data_mutation_extended.txt"
 
 
