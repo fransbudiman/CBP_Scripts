@@ -61,7 +61,7 @@ fi
 
 SCRATCH_ABS="$(realpath "$SCRATCH")"
 # loop through directory
-for vcf_file in "$PROCESSED_DIR"/*.vcf; do
+for vcf_file in "$GRCH37_DIR"/*.vcf; do
     vcf_file_container="/mount${vcf_file#$SCRATCH_ABS}"
     maf_file_container="${TEMP_DIR/#$SCRATCH_ABS/\/mount}/maf_files/$(basename "$vcf_file" .hard-filtered.vcf).maf"
     apptainer run --bind "$SCRATCH_ABS:/mount/" "$SIF_FILE" "$vcf_file_container" "$maf_file_container"
