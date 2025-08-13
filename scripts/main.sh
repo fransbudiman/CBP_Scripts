@@ -37,7 +37,7 @@ TEMP_DIR="$(dirname "$project_dir")/temp_cbioportal"
 mkdir -p "$TEMP_DIR/maf_files"
 
 # run process_vcf.py on vcf_dir
-PROCESSED_DIR="$TEMP_DIR/processed"
+PROCESSED_DIR="$(realpath "$TEMP_DIR/processed")"
 for vcf_file in "$vcf_dir"/*.vcf; do
     python "$SCRIPT_DIR/process_vcf.py" --input-vcf "$vcf_file" --output-dir "$PROCESSED_DIR"
 done
@@ -54,10 +54,7 @@ fi
 
 # loop through directory
 for vcf_file in "$PROCESSED_DIR"/*.vcf; do
-    relative_path="${vcf_file#$SCRATCH/}"
-    relative_path="${relative_path#./}"   # remove leading ./
-
-    vcf_file_container="/mount/$relative_path"
+    vcf_file_container="/mount${vcf_file#$SCRATCH}"
     maf_file_container="${TEMP_DIR/#$SCRATCH/\/mount}/maf_files/$(basename "$vcf_file" .hard-filtered.vcf).maf"
     apptainer run --bind "$SCRATCH/:/mount/" "$SIF_FILE" "$vcf_file_container" "$maf_file_container"
 done
