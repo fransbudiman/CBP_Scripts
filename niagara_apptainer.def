@@ -137,6 +137,9 @@ From: ubuntu:22.04
     INT_VCF="$INT_DIRNAME/$(basename "$1" .vcf).vep.vcf"
     rm -f "$INT_VCF"
 
+    sample_name=$(awk -F'\t' '/^#CHROM/ {print $10}' "$1")
+    echo "Sample name is: $sample_name"
+
     perl /opt/vcf2maf/vcf2maf.pl \
     --input-vcf "$1" \
     --output-maf "$2" \
@@ -144,7 +147,7 @@ From: ubuntu:22.04
     --vep-path "$(dirname "$(which vep)")" \
     --vep-data "/mount/vep_reference" \
     --ncbi-build GRCh37 \
-    --tumor-id TUMOR \
-    --normal-id NORMAL 
+    --tumor-id "$sample_name" \
+    --normal-id NORMAL
 
     # Note that if intermediate vep output files already exist, they will be overwritten.
