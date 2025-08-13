@@ -101,7 +101,7 @@ From: ubuntu:22.04
     INFOTXT_37="$REF_DIR_37/info.txt"
     download_bool=false
     echo "Checking for reference genome GRCh37 files in $REF_DIR_37"
-    ls "$REF_DIR_37"
+    # ls "$REF_DIR_37"
 
     if [ -f "$INFOTXT_37" ]; then
         echo "Reference info file found."
