@@ -42,6 +42,14 @@ for vcf_file in "$vcf_dir"/*.vcf; do
     python "$SCRIPT_DIR/process_vcf.py" --input-vcf "$vcf_file" --output-dir "$PROCESSED_DIR"
 done
 
+# The processed vcf right now is in hg19 format we need to change the chrom naming convention to GRCh37 to match our reference
+module load gcc/8.3.0 bcftools/1.8
+GRCH37_DIR="$(realpath "$TEMP_DIR/GRCh37_format")"
+mkdir -p "$GRCH37_DIR"
+for vcf_file in "$PROCESSED_DIR"/*.vcf; do
+    bcftools annotate --rename-chrs "$MAIN_DIR/chr_map.txt" -o "$GRCH37_DIR/$(basename "$vcf_file" .vcf).GRCh37.vcf" "$vcf_file"
+done
+
 # run vcf2maf.pl container on all file in PROCESSED_DIR
 # build apptainer
 DEF_FILE="$MAIN_DIR/niagara_apptainer.def"
