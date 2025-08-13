@@ -51,12 +51,12 @@ if [ ! -f "$SIF_FILE" ]; then
   apptainer --verbose build "$SIF_FILE" "$DEF_FILE"
 fi
 
-
+SCRATCH_ABS="$(realpath "$SCRATCH")"
 # loop through directory
 for vcf_file in "$PROCESSED_DIR"/*.vcf; do
-    vcf_file_container="/mount${vcf_file#$SCRATCH}"
-    maf_file_container="${TEMP_DIR/#$SCRATCH/\/mount}/maf_files/$(basename "$vcf_file" .hard-filtered.vcf).maf"
-    apptainer run --bind "$SCRATCH/:/mount/" "$SIF_FILE" "$vcf_file_container" "$maf_file_container"
+    vcf_file_container="/mount${vcf_file#$SCRATCH_ABS}"
+    maf_file_container="${TEMP_DIR/#$SCRATCH_ABS/\/mount}/maf_files/$(basename "$vcf_file" .hard-filtered.vcf).maf"
+    apptainer run --bind "$SCRATCH_ABS:/mount/" "$SIF_FILE" "$vcf_file_container" "$maf_file_container"
 done
 
 # Merge the MAF files
