@@ -14,7 +14,7 @@ input_csv = args.input_csv
 project_dir = args.project_dir
 
 output_file_path = os.path.join(project_dir, "data_clinical_sample.txt")
-df = pd.read_csv(input_csv)
+df = pd.read_csv(input_csv, sep="\t")
 
 # Write required header to output file
 with open(output_file_path, "w") as f:
@@ -27,6 +27,7 @@ with open(output_file_path, "w") as f:
 # Check if all required columns are present
 required_columns = ["PATIENT_ID", "SAMPLE_ID", "CANCER_TYPE", "CANCER_TYPE_DETAILED", "ONCOTREE_CODE"]
 if not all(col in df.columns for col in required_columns):
+    print(df.columns)
     raise ValueError(f"Input CSV must contain the following columns: {required_columns}")
     
 # Write the output file
