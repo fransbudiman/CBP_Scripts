@@ -7,12 +7,17 @@ import os
 
 parser = argparse.ArgumentParser(description='Process VCF file for MAF conversion.')
 parser.add_argument('--input-vcf', required=True, help='Path to the input VCF file.')
+parser.add_argument('--output-dir', required=True, help='Path to the directory where processed VCF will be saved.')
 
 args = parser.parse_args()
 input_vcf = args.input_vcf
-dirname = os.path.dirname(input_vcf)
+input_dir = os.path.dirname(input_vcf)
+output_dir = args.output_dir
+
+os.makedirs(output_dir, exist_ok=True)
+
 sample_name = input_vcf.split('/')[-1].replace('.hard-filtered.vcf', '')
-output_vcf = os.path.join(dirname, f"{sample_name}.processed.vcf")
+output_vcf = os.path.join(output_dir, f"{sample_name}.processed.vcf")
 print("Sample name:", sample_name)
 
 file_in = open(input_vcf, 'r')
