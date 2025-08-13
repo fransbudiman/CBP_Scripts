@@ -38,7 +38,9 @@ mkdir -p "$TEMP_DIR/maf_files"
 
 # run process_vcf.py on vcf_dir
 PROCESSED_DIR="$TEMP_DIR/processed"
-python "$SCRIPT_DIR/process_vcf.py" --input-vcf "$vcf_dir" --output-dir "$PROCESSED_DIR"
+for vcf_file in "$vcf_dir"/*.vcf; do
+    python "$SCRIPT_DIR/process_vcf.py" --input-vcf "$vcf_file" --output-dir "$PROCESSED_DIR"
+done
 
 # run vcf2maf.pl container on all file in PROCESSED_DIR
 # build apptainer
