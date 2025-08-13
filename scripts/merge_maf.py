@@ -36,12 +36,12 @@ for line in reader:
 reader.close()
 
 # Set empty dataframe for merged data. Set the columns to the first file's columns
-merged_df = pd.DataFrame()
 first_df = pd.read_csv(os.path.join(input_dir, first_file), sep='\t', comment='#')
 merged_df_columns = first_df.columns
+merged_df = pd.DataFrame(columns=merged_df_columns)
 
 for file in input_files:
-    df = pd.read_csv(os.path.join(input_dir, file), sep='\t', comment='#')
+    df = pd.read_csv(os.path.join(input_dir, file), sep='\t', comment='#', dtype=str)
 
     # Check if columns are consistent
     if not df.columns.equals(merged_df_columns):
