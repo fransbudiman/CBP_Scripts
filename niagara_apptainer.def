@@ -11,7 +11,7 @@ From: ubuntu:22.04
 # We will install miniconda here.
 %post
     # Install dependencies
-    apt-get update && apt-get install -y curl bzip2 tar perl rsync build-essential
+    apt-get update && apt-get install -y curl bzip2 tar perl rsync build-essential gzip samtools tabix
 
     # Install Miniconda
     curl -sL https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda.sh
@@ -68,15 +68,15 @@ From: ubuntu:22.04
 
     # in this case the bind will be --bind $SCRATCH/:/mount/
     mkdir -p /mount/vep_reference/homo_sapiens/112_GRCh38
-    REF_DIR="/mount/vep_reference/homo_sapiens/112_GRCh38"
-    INFOTXT="$REF_DIR/info.txt"
+    REF_DIR_38="/mount/vep_reference/homo_sapiens/112_GRCh38"
+    INFOTXT_38="$REF_DIR_38/info.txt"
     download_bool=false
-    echo "Checking for reference genome files in $REF_DIR"
-    ls "$REF_DIR"
+    echo "Checking for reference genome files in $REF_DIR_38"
+    # ls "$REF_DIR_38"
 
-    if [ -f "$INFOTXT" ]; then
+    if [ -f "$INFOTXT_38" ]; then
         echo "Reference info file found."
-        if grep -q "GRCh38" "$INFOTXT"; then
+        if grep -q "GRCh38" "$INFOTXT_38"; then
             echo "Reference genome GRCh38 found skipping download step."
         else
             echo "Reference genome GRCh38 not found."
@@ -95,6 +95,38 @@ From: ubuntu:22.04
         rsync -avr --progress rsync://ftp.ensembl.org/ensembl/pub/release-112/fasta/homo_sapiens/dna_index/ /mount/vep_reference/
     fi
 
+    # Now for GRCh37
+    mkdir -p /mount/vep_reference/homo_sapiens/112_GRCh37
+    REF_DIR_37="/mount/vep_reference/homo_sapiens/112_GRCh37"
+    INFOTXT_37="$REF_DIR_37/info.txt"
+    download_bool=false
+    echo "Checking for reference genome GRCh37 files in $REF_DIR_37"
+    ls "$REF_DIR_37"
+
+    if [ -f "$INFOTXT_37" ]; then
+        echo "Reference info file found."
+        if grep -q "GRCh37" "$INFOTXT_37"; then
+            echo "Reference genome GRCh37 found skipping download step."
+        else
+            echo "Reference genome GRCh37 not found."
+            download_bool=true
+        fi
+    else
+        echo "Reference genome GRCh37 not found."
+        download_bool=true
+    fi
+
+    if [ "$download_bool" = true ]; then
+        echo "Downloading reference genome GRCh37..."
+        # Command to download the reference genome
+        rsync -avr --progress rsync://ftp.ensembl.org/ensembl/pub/release-112/variation/indexed_vep_cache/homo_sapiens_vep_112_GRCh37.tar.gz /mount/vep_reference/
+        tar -zxf /mount/vep_reference/homo_sapiens_vep_112_GRCh37.tar.gz -C /mount/vep_reference/
+        rsync -avr --progress rsync://ftp.ensembl.org/ensembl/pub/grch37/release-112/fasta/homo_sapiens/dna/Homo_sapiens.GRCh37.dna.toplevel.fa.gz /mount/vep_reference/homo_sapiens/112_GRCh37/
+        gzip -d /mount/vep_reference/homo_sapiens/112_GRCh37/Homo_sapiens.GRCh37.dna.toplevel.fa.gz
+        bgzip -i /mount/vep_reference/homo_sapiens/112_GRCh37/Homo_sapiens.GRCh37.dna.toplevel.fa
+        samtools faidx /mount/vep_reference/homo_sapiens/112_GRCh37/Homo_sapiens.GRCh37.dna.toplevel.fa.gz
+    fi
+
     # activate vep again
     . /opt/miniconda3/etc/profile.d/conda.sh
     conda activate vep
@@ -108,10 +140,10 @@ From: ubuntu:22.04
     perl /opt/vcf2maf/vcf2maf.pl \
     --input-vcf "$1" \
     --output-maf "$2" \
-    --ref-fasta "$REF_DIR/Homo_sapiens.GRCh38.dna.toplevel.fa.gz" \
+    --ref-fasta "$REF_DIR_37/Homo_sapiens.GRCh37.dna.toplevel.fa.gz" \
     --vep-path "$(dirname "$(which vep)")" \
     --vep-data "/mount/vep_reference" \
-    --ncbi-build GRCh38 \
+    --ncbi-build GRCh37 \
     --tumor-id TUMOR \
     --normal-id NORMAL 
 
