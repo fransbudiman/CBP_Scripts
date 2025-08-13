@@ -80,4 +80,4 @@ read study_name
 python "$SCRIPT_DIR/metadata_maker.py" --study-identifier "$study_id" --name "$study_name" --project-dir "$project_dir" --sample-csv "$input_csv"
 
 # Make clinical sample data file
-python "$SCRIPT_DIR/clinicaldata_maker.py" --input-csv "$input_csv" --output-dir "$project_dir"
+python "$SCRIPT_DIR/clinicaldata_maker.py" --input-csv "$input_csv" --project-dir "$project_dir"
