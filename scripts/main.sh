@@ -55,6 +55,8 @@ fi
 # loop through directory
 for vcf_file in "$PROCESSED_DIR"/*.vcf; do
     relative_path="${vcf_file#$SCRATCH/}"
+    relative_path="${relative_path#./}"   # remove leading ./
+
     vcf_file_container="/mount/$relative_path"
     maf_file_container="${TEMP_DIR/#$SCRATCH/\/mount}/maf_files/$(basename "$vcf_file" .hard-filtered.vcf).maf"
     apptainer run --bind "$SCRATCH/:/mount/" "$SIF_FILE" "$vcf_file_container" "$maf_file_container"
