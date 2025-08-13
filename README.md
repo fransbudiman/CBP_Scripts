@@ -3,9 +3,10 @@ Scripts for cBioPortal project
 
 # General Flow
 1. Assume we have a directory full of VCF files, this signifies a study.
-2. We first run vcf2maf to convert the VCF files into MAF format.
-3. Then we will rename the tumor sample column to SGT naming convention and create a mapping file for future reference.
-4. Next we will merge the MAF files into a single MAF file.
+2. First change the VCF sample name column to SGT naming format.
+3. Then convert each VCF to MAF. This is because vcf2maf tool can only process one tumor-normal pair at a time. From the VCF I received, I will assume that each VCF file contains a single tumor sample. Normal-id argument in vcf2maf.pl will be set to UNAVAILABLE.
+4. Next, we will merge the MAF files into a single MAF file and renaming it to "data_mutation_extended.txt" to follow CBioPortal standards.
+
 5. Then we will find the oncotree code for the cancer type of the whole study. If study has multiple cancer types, we will use the most common one. **unsure how to handle this yet**.
 6. Then we will make the metadata text file for the study.
 7. Then using the SGT/TM mapping file and the provided csv file containing more information about the samples, we will create the data_clinical_sample.txt file.
