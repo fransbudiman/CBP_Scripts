@@ -44,8 +44,8 @@ done
 
 # run vcf2maf.pl container on all file in PROCESSED_DIR
 # build apptainer
-DEF_FILE="$SCRIPT_DIR/niagara_apptainer.def"
-SIF_FILE="$SCRIPT_DIR/niagara_apptainer.sif"
+DEF_FILE="$MAIN_DIR/niagara_apptainer.def"
+SIF_FILE="$MAIN_DIR/niagara_apptainer.sif"
 
 if [ ! -f "$SIF_FILE" ]; then
   apptainer --verbose build "$SIF_FILE" "$DEF_FILE"
