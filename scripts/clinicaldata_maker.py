@@ -26,6 +26,9 @@ with open(output_file_path, "w") as f:
 
 # Check if all required columns are present
 required_columns = ["PATIENT_ID", "SAMPLE_ID", "CANCER_TYPE", "CANCER_TYPE_DETAILED", "ONCOTREE_CODE"]
+# Sanitize column
+df.columns = df.columns.str.strip()  # removes leading/trailing spaces
+df.columns = df.columns.str.replace('\xa0', '')  # removes non-breaking spaces
 if not all(col in df.columns for col in required_columns):
     print(df.columns)
     raise ValueError(f"Input CSV must contain the following columns: {required_columns}")
