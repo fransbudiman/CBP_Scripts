@@ -64,7 +64,7 @@ TEMP_DIR_ABS="$(realpath "$TEMP_DIR")"
 # loop through directory
 for vcf_file in "$GRCH37_DIR"/*.vcf; do
     vcf_file_container="/mount${vcf_file#$SCRATCH_ABS}"
-    maf_file_container="${TEMP_DIR_ABS/#$SCRATCH_ABS/\/mount}/maf_files/$(basename "$vcf_file" .hard-filtered.vcf).maf"
+    maf_file_container="${TEMP_DIR_ABS/#$SCRATCH_ABS/\/mount}/maf_files/$(basename "$vcf_file" .processed.GRCh37.vcf).maf"
     apptainer run --bind "$SCRATCH_ABS:/mount/" "$SIF_FILE" "$vcf_file_container" "$maf_file_container"
 done
 
