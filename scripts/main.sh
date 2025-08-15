@@ -2,11 +2,14 @@
 
 set -x
 
-while getopts "i:p:v:" opt; do
+override=false
+
+while getopts "i:p:v:o:" opt; do
   case $opt in
     i) input_csv="$OPTARG";;
     p) project_dir="$OPTARG";;
     v) vcf_dir="$OPTARG";;
+    o) override="$OPTARG";;
     \?) echo "Invalid option -$OPTARG" >&2;;
   esac
 done
@@ -42,27 +45,28 @@ for vcf_file in "$vcf_dir"/*.vcf; do
     python "$SCRIPT_DIR/process_vcf.py" --input-vcf "$vcf_file" --output-dir "$PROCESSED_DIR"
 done
 
-# The processed vcf right now is in hg19 format we need to change the chrom naming convention to GRCh37 to match our reference
-module load gcc/8.3.0 bcftools/1.8
-GRCH37_DIR="$(realpath "$TEMP_DIR/GRCh37_format")"
-mkdir -p "$GRCH37_DIR"
-for vcf_file in "$PROCESSED_DIR"/*.vcf; do
-    bcftools annotate --rename-chrs "$MAIN_DIR/chr_map.txt" -o "$GRCH37_DIR/$(basename "$vcf_file" .vcf).GRCh37.vcf" "$vcf_file"
-done
+# # The processed vcf right now is in hg19 format we need to change the chrom naming convention to GRCh37 to match our reference
+# module load gcc/8.3.0 bcftools/1.8
+# GRCH37_DIR="$(realpath "$TEMP_DIR/GRCh37_format")"
+# mkdir -p "$GRCH37_DIR"
+# for vcf_file in "$PROCESSED_DIR"/*.vcf; do
+#     bcftools annotate --rename-chrs "$MAIN_DIR/chr_map.txt" -o "$GRCH37_DIR/$(basename "$vcf_file" .vcf).GRCh37.vcf" "$vcf_file"
+# done
 
 # run vcf2maf.pl container on all file in PROCESSED_DIR
 # build apptainer
 DEF_FILE="$MAIN_DIR/niagara_apptainer.def"
 SIF_FILE="$MAIN_DIR/niagara_apptainer.sif"
 
-if [ ! -f "$SIF_FILE" ]; then
+if [ ! -f "$SIF_FILE" ] || [ "$override" = true ]; then
+  rm -f "$SIF_FILE"
   apptainer --verbose build "$SIF_FILE" "$DEF_FILE"
 fi
 
 SCRATCH_ABS="$(realpath "$SCRATCH")"
 TEMP_DIR_ABS="$(realpath "$TEMP_DIR")"
 # loop through directory
-for vcf_file in "$GRCH37_DIR"/*.vcf; do
+for vcf_file in "$PROCESSED_DIR"/*.vcf; do
     if [[ "$vcf_file" == *.vep.vcf ]]; then
         continue
     fi
