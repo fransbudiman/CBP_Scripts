@@ -133,9 +133,9 @@ From: ubuntu:22.04
     
     # If intermediate file already exist delete them first. Intermediate file is in input file directory.
     # name of intermediate is input_name.vep.vcf.
-    INT_DIRNAME="$(dirname "$1")"
-    INT_VCF="$INT_DIRNAME/$(basename "$1" .vcf).vep.vcf"
-    rm -f "$INT_VCF"
+    # INT_DIRNAME="$(dirname "$1")"
+    # INT_VCF="$INT_DIRNAME/$(basename "$1" .vcf).vep.vcf"
+    # rm -f "$INT_VCF"
 
     sample_name=$(awk -F'\t' '/^#CHROM/ {print $10}' "$1")
     echo "Sample name is: $sample_name"
@@ -158,5 +158,7 @@ From: ubuntu:22.04
     --vep-data "/mount/vep_reference" \
     --ncbi-build GRCh37 \
     --tumor-id "$sample_name" \
-    --normal-id NORMAL
+    --normal-id NORMAL \
+    --vep-overwrite
+
     # Note that if intermediate vep output files already exist, they will be overwritten.
