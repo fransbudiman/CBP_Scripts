@@ -36,7 +36,7 @@ fi
 # Get the absolute path to the CBP_Scripts directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MAIN_DIR="$(dirname "$SCRIPT_DIR")"
-TEMP_DIR="$(dirname "$project_dir")/temp_cbioportal"
+TEMP_DIR="$project_dir"/temp_cbioportal
 mkdir -p "$TEMP_DIR/maf_files"
 
 # run process_vcf.py on vcf_dir
@@ -98,3 +98,7 @@ python "$SCRIPT_DIR/metadata_maker.py" --study-identifier "$study_id" --name "$s
 
 # Make clinical sample data file
 python "$SCRIPT_DIR/clinicaldata_maker.py" --input-csv "$input_csv" --project-dir "$project_dir"
+
+mv "$TEMP_DIR/data_mutation_extended.txt" "$project_dir/data_mutation_extended.txt"
+
+rm -rf "$TEMP_DIR"
