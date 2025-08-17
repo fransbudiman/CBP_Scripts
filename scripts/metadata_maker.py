@@ -41,3 +41,18 @@ with open(meta_clinical_sample_file, "w") as f:
     f.write("data_filename: data_clinical_sample.txt\n")
 
 print("meta_clinical_sample.txt is complete")
+
+# Next create meta_mutations_extended.txt
+
+meta_mutations_extended_file = os.path.join(project_dir, "meta_mutations_extended.txt")
+with open(meta_mutations_extended_file, "w") as f:
+    f.write(f"cancer_study_identifier: {study_identifier}\n")
+    f.write("genetic_alteration_type: MUTATION_EXTENDED\n")
+    f.write("stable_id: mutations\n")
+    f.write("datatype: MAF\n")
+    f.write("show_profile_in_analysis_tab: true\n")
+    f.write("profile_name: Mutations\n")
+    f.write("profile_description: Mutation data from sequencing\n")
+    f.write("data_filename: data_mutations_extended.txt\n")
+
+print("meta_mutations_extended.txt is complete")
