@@ -24,7 +24,7 @@ with open(meta_study_file, "w") as f:
     f.write("type_of_cancer: mixed\n")
     f.write(f"cancer_study_identifier: {study_identifier}\n")
     f.write(f"name: {name}\n")
-    f.write("reference_genome: hg38\n")
+    f.write("reference_genome: hg19\n")
     f.write("add_global_case_list: true\n")
     f.write(f"description: {description}\n")
 
