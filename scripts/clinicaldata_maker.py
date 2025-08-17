@@ -34,6 +34,6 @@ if not all(col in df.columns for col in required_columns):
     raise ValueError(f"Input CSV must contain the following columns: {required_columns}")
     
 # Write the output file
-df.to_csv(output_file_path, sep="\t", index=False)
+df.to_csv(output_file_path, sep="\t", index=False, mode='a', header=False)
 print(f"Clinical data file created at: {output_file_path}")
 
