@@ -101,7 +101,7 @@ python "$SCRIPT_DIR/metadata_maker.py" --study-identifier "$study_id" --name "$s
 # Make clinical sample data file
 python "$SCRIPT_DIR/clinicaldata_maker.py" --input-csv "$input_csv" --project-dir "$project_dir"
 
-mv "$TEMP_DIR/data_mutation_extended.txt" "$project_dir/data_mutation_extended.txt"
+mv "$TEMP_DIR/data_mutation_extended.txt" "$project_dir/data_mutations_extended.txt"
 
 # Make cases directory and file
 python "$SCRIPT_DIR/cases_sequenced.py" --project-dir "$project_dir"
